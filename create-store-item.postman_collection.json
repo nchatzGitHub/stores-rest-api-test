@@ -1,0 +1,356 @@
+{
+	"info": {
+		"_postman_id": "baf78c5b-d914-46d3-8cde-d8a5a45da282",
+		"name": "User create store and item",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "724d39b9-9f45-487b-9524-743b52e6f8ab",
+						"exec": [
+							"postman.clearEnvironmentVariable(\"access_token\");\r",
+							"\r",
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"tests[\"User created successfully\"] = jsonData.message === 'User created successfully';\r",
+							"\r",
+							"tests[\"Content-Type is present in response\"] = postman.getResponseHeader('Content-Type');\r",
+							"tests[\"Content-Type is 'application/json'\"] = postman.getResponseHeader('Content-Type')===\r",
+							"    'application/json';\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user4\",\n\t\"password\": \"abcwyz\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70117b9b-88ad-4403-acaf-dde6d5a91b8a",
+						"exec": [
+							"// Store the response to a variable. The response is the accessToken\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"// We set the environment programatically an put the accessToken in order to have a new one in every test we run because it expires after 5 minutes. See the eye icon up-rigch corner\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);\r",
+							"\r",
+							"tests[\"Status code is 200\"] = responseCode.code ===200;\r",
+							"\r",
+							"tests[\"The body contains access_token\"] = responseBody.has(\"access_token\");\r",
+							"\r",
+							"tests[\"Response time is less than 150ms\"] = responseTime < 150;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"user4\",\n\t\"password\": \"abcwyz\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/auth",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/store/test_store",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "def80e03-32e1-440d-b72a-5ce2fbb48ab6",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"tests[\"Store name is returned\"] = jsonData.name === 'test_store';\r",
+							"tests[\"Store id is returned\"] = jsonData.id === 1;\r",
+							"tests[\"Store items are an empty list\"] = jsonData.items.length === 0;\r",
+							"\r",
+							"tests[\"Successful POST request\"] = responseCode.code === 201;\r",
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;\r",
+							"\r",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\r",
+							"tests[\"Content-Type is 'application/json'\"] = postman.getResponseHeader(\"Content-Type\") === 'application/json'\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"store_id\", jsonData.id);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\" : 1, \n\"items\" : []}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/store/test_store",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"store",
+						"test_store"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/item/test_item in test_store",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a2833c2c-feaa-4847-8edb-9418c6281c1e",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"tests[\"Item name is returned\"] = jsonData.name === 'test_item';\r",
+							"tests[\"Item price is returned\"] = jsonData.price === 17.99;\r",
+							"tests[\"Successful POST request\"] = responseCode.code === 201;\r",
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;\r",
+							"\r",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\r",
+							"tests[\"Content-Type is 'application/json'\"] = postman.getResponseHeader(\"Content-Type\") === 'application/json'\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"price\" : 17.99, \n\"store_id\" : {{store_id}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/item/test_item",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"test_item"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/stores",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1b3507fd-7a46-47a7-ae37-d6356a2fcc5b",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"tests[\"Store 'test_store' is returned\"] = jsonData.stores[0].name === 'test_store';\r",
+							"tests[\"ID of store 'test_store' is returned\"] = jsonData.stores[0].id === parseInt(environment.store_id);\r",
+							"tests[\"Item 'test_item' is returned inside 'test_store'\"] = jsonData.stores[0].items[0].name === 'test_item';\r",
+							"tests[\"Item 'test_item' price is returned inside 'test_store'\"] = jsonData.stores[0].items[0].price === 17.99;\r",
+							"\r",
+							"tests[\"Response time is less than 200ms\"] = responseTime <20;\r",
+							"\r",
+							"\r",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\r",
+							"tests[\"Content-Type is 'application/json'\"] = postman.getResponseHeader(\"Content-Type\") === 'application/json'"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/stores",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"stores"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/item/test_item",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f99bf0d9-813f-4a5a-9a9d-2df186966605",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"tests[\"Message is returned\"] = jsonData.message === \"Item deleted\";\r",
+							"tests[\"Successful DEL request\"] = responseCode.code === 200;\r",
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;\r",
+							"\r",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\r",
+							"tests[\"Content-Type is 'application/json'\"] = postman.getResponseHeader(\"Content-Type\") === 'application/json'"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/item/test_item",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"item",
+						"test_item"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/store/test_store",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6e9f143f-720b-4e20-82e3-814f3a3c5251",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"tests[\"Message is returned\"] = jsonData.message === \"Store deleted\";\r",
+							"tests[\"Successful DEL request\"] = responseCode.code === 200;\r",
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;\r",
+							"\r",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");\r",
+							"tests[\"Content-Type is 'application/json'\"] = postman.getResponseHeader(\"Content-Type\") === 'application/json'"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/store/test_store",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"store",
+						"test_store"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
